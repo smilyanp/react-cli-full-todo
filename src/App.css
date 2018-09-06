@@ -1,0 +1,21 @@
+.app {
+  margin-top: 40px;
+}
+.completed {
+  text-decoration: line-through;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+.fade-leave-enter {
+  opacity: 1;
+}
+.fade-leave-active {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
