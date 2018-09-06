@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import './App.css';
-import * as classNames from 'classnames';
+import '../assets/App.css';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+import Remaining from './Todos/Remaining';
+import CheckAll from './Todos/CheckAll';
+import ClearCompleted from './Todos/ClearCompleted';
+import Filters from './Todos/Filters';
+import AddTodo from './Todos/Add';
+import TodoItem from './Todos/Todo';
 
 class App extends Component {
 
@@ -98,16 +103,10 @@ class App extends Component {
   }
 
   cancelEdit = (todo, index, event) => {
-    
-    console.log(todo);
-
     this.setState((prevState, props) => {
       let todos = prevState.todos;
       todo.title = prevState.beforeEditCache;
       todo.editing = false;
-
-      console.log(todo, index);
-
       todos.splice(index, 1, todo);
       return { todos, beforeEditCache: '' };
     });
@@ -152,7 +151,6 @@ class App extends Component {
     this.setState((prevState, props) => {
       let todos = prevState.todos;
       todos.forEach(todo => todo.completed = event.target.checked);
-      console.log(todos);
       return { todos }
     });
   }
@@ -163,42 +161,41 @@ class App extends Component {
         <div className="row">
           <div className="col-sm-12">
 
-
             <div className="row">
               <div className="col-sm-12">
-                <input 
-                  type="text" 
-                  placeholder="What should we do next?" 
-                  className="form-control input-lg" 
-                  ref={this.addTodoInput}
-                  onKeyUp={this.addTodo} />
+                <AddTodo 
+                  addTodoInput={this.addTodoInput} 
+                  addTodo={this.addTodo} />
               </div>
             </div>
 
             <hr />
             <div className="row">
-              <div className="col-sm-6">
-                <div className="btn-group">
-                  <button className={classNames({"btn btn-default": true, "active": this.state.filter === 'all'})} onClick={() => this.updateFilter('all')}>All</button>
-                  <button className={classNames({"btn btn-default": true, "active": this.state.filter === 'active'})} onClick={() => this.updateFilter('active')}>Active</button>
-                  <button className={classNames({"btn btn-default": true, "active": this.state.filter === 'completed'})} onClick={() => this.updateFilter('completed')}>Completed</button>
-                </div>
+
+              <div className="col-sm-2">
+                <CheckAll 
+                  handleCheckAllTodos={this.checkAllTodos} 
+                  getAnyRemaining={this.anyRemaining()} />
               </div>
-              <div className="col-sm-6 text-right">
+
+              <div className="col-sm-6">
+                <Filters 
+                  filter={this.state.filter} 
+                  updateFilter={this.updateFilter} />
+              </div>
+
+              <div className="col-sm-4 text-right">
                 <ReactCSSTransitionGroup 
                   transitionName="fade" 
                   transitionEnterTimeout={300}
                   transitionLeaveTimeout={300}
                   >
                     {this.completedTodosCount() > 0 &&
-                      <button 
-                        className="btn btn-danger" 
-                        onClick={this.clearCompleted}>
-                          Clear completed
-                      </button>
+                      <ClearCompleted clearCompleted={this.clearCompleted} />
                     }
                 </ReactCSSTransitionGroup>
               </div>
+
             </div>
 
             <hr />
@@ -209,48 +206,25 @@ class App extends Component {
                   transitionLeaveTimeout={300}
                   >
                   {this.todosFiltered().map((todo, index) => 
-                    <li className="list-group-item" key={todo.id}>
-                      <div className="row">
-                        <div className="col-sm-1">
-                          <input type="checkbox" checked={todo.completed} onChange={(event) => this.checkTodo(todo, index, event)} />
-                        </div>
-                        {/*<div className={"col-sm-6 text-left " + (todo.completed ? 'completed' : '')}>{todo.title}</div>*/}
-                        <div className={classNames({"col-sm-6": true, "hidden": !todo.editing})}>
-                          <input 
-                            type="text" 
-                            className="form-control" 
-                            defaultValue={todo.title} 
-                            autoFocus 
-                            onBlur={(event) => this.doneEdit(todo, index, event)}
-                            onKeyUp={(event) => {
-                              if (event.key === 'Enter') {
-                                this.doneEdit(todo, index, event)
-                              } else if (event.key === 'Escape') {
-                                this.cancelEdit(todo, index, event)
-                              }
-                            }} />
-                        </div>
-                        <div 
-                          onDoubleClick={(event) => this.editTodo(todo, index, event)} 
-                          className={classNames({"col-sm-6 text-left": true, "completed": todo.completed, "hidden": todo.editing})}>
-                          {todo.title}
-                        </div>
-                        <div className="col-sm-5 text-right">
-                          <button className="btn btn-danger" onClick={(event) => this.deleteTodo(index)}>Delete</button>
-                        </div>
-                      </div>
-                    </li>
+                    <TodoItem 
+                      todo={todo} 
+                      index={index} 
+                      key={todo.id} 
+                      checkTodo={this.checkTodo}
+                      editTodo={this.editTodo}
+                      doneEdit={this.doneEdit}
+                      cancelEdit={this.cancelEdit}
+                      deleteTodo={this.deleteTodo}
+                    />
                   )}
               </ReactCSSTransitionGroup>
             </ul>
 
             <hr />
             <div className="row">
-              <div className="col-sm-8">
-                <label><input type="checkbox" onChange={this.checkAllTodos} checked={!this.anyRemaining()} /> Check all</label>
-              </div>
-              <div className="col-sm-4 text-right">
-                {this.remainingTodosCount()} items left
+              <div className="col-sm-12 text-left">
+                <Remaining 
+                  remainingCount={this.remainingTodosCount()} />
               </div>
             </div>
 
