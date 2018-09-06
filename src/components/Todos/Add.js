@@ -1,20 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const Add = (props) => {
+import { inject, observer } from 'mobx-react';
+
+const Add = inject('TodoStore')(observer(props => {
+  const TodoStore = props.TodoStore;
   return (
     <input 
       type="text" 
       placeholder="What should we do next?" 
       className="form-control input-lg" 
-      ref={props.addTodoInput}
-      onKeyUp={props.addTodo} />
+      ref={TodoStore.addTodoInput}
+      onKeyUp={TodoStore.addTodo} />
   )
-}
-
-Add.propTypes = {
-    addTodoInput: PropTypes.object.isRequired,
-    addTodo: PropTypes.func.isRequired
-}
+}))
 
 export default Add;

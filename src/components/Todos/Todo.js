@@ -2,7 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as classNames from 'classnames';
 
-const TodoItem = (props) => {
+import { inject, observer } from 'mobx-react';
+
+const TodoItem = inject('TodoStore')(observer(props => {
+  const TodoStore = props.TodoStore;
+
   return (
     <li className="list-group-item">
       <div className="row">
@@ -10,7 +14,7 @@ const TodoItem = (props) => {
           <input 
             type="checkbox" 
             checked={props.todo.completed} 
-            onChange={(event) => props.checkTodo(props.todo, props.index, event)} />
+            onChange={(event) => TodoStore.checkTodo(props.todo, event)} />
         </div>
         <div className={classNames({"col-sm-6": true, "hidden": !props.todo.editing})}>
           <input 
@@ -18,40 +22,34 @@ const TodoItem = (props) => {
             className="form-control" 
             defaultValue={props.todo.title} 
             autoFocus 
-            onBlur={(event) => props.doneEdit(props.todo, props.index, event)}
+            onBlur={(event) => TodoStore.doneEdit(props.todo, event)}
             onKeyUp={(event) => {
               if (event.key === 'Enter') {
-                props.doneEdit(props.todo, props.index, event)
+                TodoStore.doneEdit(props.todo, event)
               } else if (event.key === 'Escape') {
-                props.cancelEdit(props.todo, props.index, event)
+                TodoStore.cancelEdit(props.todo, event)
               }
             }} />
         </div>
         <div 
-          onDoubleClick={(event) => props.editTodo(props.todo, props.index, event)} 
+          onDoubleClick={(event) => TodoStore.editTodo(props.todo, event)} 
           className={classNames({"col-sm-6 text-left": true, "completed": props.todo.completed, "hidden": props.todo.editing})}>
           {props.todo.title}
         </div>
         <div className="col-sm-5 text-right">
           <button 
             className="btn btn-danger" 
-            onClick={(event) => props.deleteTodo(props.index)}>
+            onClick={(event) => TodoStore.deleteTodo(props.todo.id)}>
                 Delete
             </button>
         </div>
       </div>
     </li>
   )
-}
+}));
 
 TodoItem.propTypes = {
     todo: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired,
-    checkTodo: PropTypes.func.isRequired,
-    editTodo: PropTypes.func.isRequired,
-    doneEdit: PropTypes.func.isRequired,
-    cancelEdit: PropTypes.func.isRequired,
-    deleteTodo: PropTypes.func.isRequired
 }
 
 export default TodoItem;

@@ -1,19 +1,14 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 
-class CheckAll extends Component {
-    render() {
-        return (
-            <label>
-                <input type="checkbox" onChange={this.props.handleCheckAllTodos} checked={!this.props.getAnyRemaining} /> Check all
-            </label>
-        );
-    }
-}
+import { inject, observer } from 'mobx-react';
 
-CheckAll.propTypes = {
-    getAnyRemaining: PropTypes.bool.isRequired,
-    handleCheckAllTodos: PropTypes.func.isRequired
-}
+const CheckAll = inject('TodoStore')(observer(props => {
+    const TodoStore = props.TodoStore;
+    return (
+        <label>
+            <input type="checkbox" onChange={TodoStore.checkAllTodos} checked={!TodoStore.anyRemaining} /> Check all
+        </label>
+    );
+}));
 
 export default CheckAll;

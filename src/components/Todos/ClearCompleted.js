@@ -1,17 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const ClearCompleted = (props) => {
-  return (
-    <button 
-        className="btn btn-danger" 
-        onClick={props.clearCompleted}>
-            Clear completed
-    </button>
-  )
-}
-ClearCompleted.propTypes = {
-    clearCompleted: PropTypes.func.isRequired
-}
+import { inject, observer } from 'mobx-react';
+
+const ClearCompleted = inject('TodoStore')(observer(props => {
+    return (
+        <button 
+            className="btn btn-danger" 
+            onClick={props.TodoStore.clearCompleted}>
+                Clear completed
+        </button>
+    )
+}));
 
 export default ClearCompleted;

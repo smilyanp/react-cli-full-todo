@@ -1,20 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import * as classNames from 'classnames';
 
-const Filters = (props) => {
+import { inject, observer } from 'mobx-react';
+
+const Filters = inject('TodoStore')(observer(props => {
+  const TodoStore = props.TodoStore;
   return (
     <div className="btn-group">
-      <button className={classNames({"btn btn-default": true, "active": props.filter === 'all'})} onClick={() => props.updateFilter('all')}>All</button>
-      <button className={classNames({"btn btn-default": true, "active": props.filter === 'active'})} onClick={() => props.updateFilter('active')}>Active</button>
-      <button className={classNames({"btn btn-default": true, "active": props.filter === 'completed'})} onClick={() => props.updateFilter('completed')}>Completed</button>
+      <button className={classNames({"btn btn-default": true, "active": TodoStore.filter === 'all'})} onClick={() => TodoStore.updateFilter('all')}>All</button>
+      <button className={classNames({"btn btn-default": true, "active": TodoStore.filter === 'active'})} onClick={() => TodoStore.updateFilter('active')}>Active</button>
+      <button className={classNames({"btn btn-default": true, "active": TodoStore.filter === 'completed'})} onClick={() => TodoStore.updateFilter('completed')}>Completed</button>
     </div>
   )
-}
-
-Filters.propTypes = {
-    filter: PropTypes.string.isRequired,
-    updateFilter: PropTypes.func.isRequired
-}
+}));
 
 export default Filters;
